@@ -1,0 +1,137 @@
+module Example: (Math) ->
+
+# Assignment (not really assignment, just declaration, order independent, mutually recursive)
+number: 42
+opposite: true
+
+# Conditions
+number2: -42 if opposite
+
+# Functions:
+square: (x) -> x * x
+
+# Arrays:
+list: [1, 2, 3, 4, 5]
+
+# Objects:
+math:
+    root: Math/sqrt
+    square: square
+    cube: (x) -> x * square x
+    
+---
+
+Example(Math) = module {
+
+    number = 42
+    opposite = true
+
+    square(x) = x * x
+
+    list = [1, 2, 3, 4, 5]
+
+    math = {
+        root = Math/sqrt
+        square = square
+        cube(x) = x * square x
+	}
+}
+
+
+required,enum,pattern,type,range,length,assert,
+unique,name,desc,class,default
+
+---
+
+//schema 1
+Schema1:[String]
+
+Schema2:{
+	name:String
+	email:String when (@match /@/)
+	age:Int?
+	birth:Date?
+}
+
+Schema3:[{
+	name:String
+	email:String?
+}]
+
+Schema4:{
+	company:String
+	email:String?
+	employees:[{
+		code:Int
+		name:String
+		email:String?
+	}]
+}
+
+/*
+required,enum,pattern,type,range,length,assert,
+unique,name,desc,class,default
+*/
+Schema5:[{
+	//required (by default)
+	name:String
+	//pattern match is just based on a method on strings
+	email:String when (@match /@/)
+	//assert
+	password:String when (8 < @length < 16)
+	//range
+	age:18..30
+	//enum
+	blood:(.A | .B | .O | .AB)
+	//optional
+	birth:Date?
+	//Any type
+	memo:Any?
+	//default
+	deleted:Bool = false
+}]
+---
+//OK, so I need to figure out WTF I'm doing with facets/tags
+
+module PlayingCards() = {
+	def Deck = {
+		.cards:[Card] = List/zip(Suit,CardValues){
+			(s,c) = Card s c //should be able to do type inference
+		}
+		
+		@deal = (card,newDeck)
+				where
+					(card, newCardList) = @.cards/pop
+					newDeck = @.cards(newCardList)
+	}
+	struct Card(suit:Suit,value:CardValue) //kind of like scala case classes 
+	
+	facet Suit = Heart | Diamond | Club | Spade
+	
+	facet CardValue
+		= Two  | Three | Four  | Five
+		| Six  | Seven | Eight | Nine | Ten
+ 		| Jack | Queen | King  | Ace
+		{
+			square(x) = x*x
+		}
+		
+	facet CardValue = {
+		
+	}
+			
+	
+}
+---
+module PlayingCards() where
+
+Deck = {
+	.cards = (Suit,CardValue)
+}
+
+
+
+
+
+
+---

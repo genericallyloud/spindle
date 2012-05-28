@@ -1,0 +1,73 @@
+--- Todos() = {
+    resource Todo = {
+        _id
+        status:TodoStatus = .todo
+        name.String
+    }
+
+    facet TodoStatus = {
+        .todo
+        .complete(completedBy:User, on.date)
+    }
+
+    resource User = {
+        _id
+        name.String
+    }
+} 
+
+
+--- TodoServer(HttpServer, Todos{Todo,User}) = 
+HttpServer{
+    port = 8080
+    routes = {
+        /todos/complete/{userId} = {
+        
+        }
+    }
+    resources = [
+        Todo
+        User
+    ]
+}
+
+--- (TodoServer) =
+TodoServer/start
+
+=============== Canonical =======================
+{
+	Todos() = {
+	    resource Todo = {
+	        _id
+	        status:TodoStatus = .todo
+	        name.String
+	    }
+
+	    facet TodoStatus = {
+	        .todo
+	        .complete(completedBy:User, on.date)
+	    }
+
+	    resource User = {
+	        _id
+	        name.String
+	    }
+	} 
+
+
+	TodoServer(HttpServer, Todos{Todo,User}) = 
+		HttpServer{
+		    port = 8080
+		    routes = {
+		        /todos/complete/{userId} = {
+
+		        }
+		    }
+		    resources = [
+		        Todo
+		        User
+		    ]
+		}
+	
+	(TodoServer) = TodoServer/start
+}

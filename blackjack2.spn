@@ -1,0 +1,32 @@
+schema Blackjack:{
+    enum Suit:{
+        Heart,Diamond,Club,Spade
+    }
+    enum CardValue:{
+        Two, Three, Four, Five
+		Six, Seven, Eight, Nine, Ten
+ 		Jack, Queen, King, Ace
+    }
+    
+    Card:{suit:Suit,value:CardValue}
+    protocol Hand:{
+        upCard():Card
+        total():Int
+    }
+    
+    Strategy:(Hand,Card)->Bool
+    Dealer:{
+        
+    }
+    
+    Player:{
+        hand:Hand
+        strategy:Strategy
+    }
+    
+    
+}
+
+def blackjack(deck, Dealer, Players) =
+    let dealer = Dealer deck
+    let player = 

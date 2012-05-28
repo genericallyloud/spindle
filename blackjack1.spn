@@ -1,0 +1,38 @@
+type Card:Int
+type Strategy:(Hand,Card) -> Bool
+def stupidStrategy(myHand:Hand, opponentUpCard:Card) = opponentUpCard > 5
+
+//plays out hitting and returns the final hand
+def playHand(strategy:Strategy, myHand, opponentUpCard):Hand = match {
+    if myHand.total() > 21              = myHand
+    if strategy(myHand, opponentUpCard) = playHand(strategy, myHand.addCard(deal()), opponentUpCard)
+    else                                = myHand
+}
+
+tag Hand:{upCard:Int,total:Int}
+extend Hand = {
+    def upCard = @upCard
+    def total = @total
+    def addCard(newCard) = @{ total += newCard }
+}
+
+def newHand(firstCard) = Hand{ upCard=firstCard, total=firstCard }
+def deal() = random(10) + 1
+def twentyOne(playerStrategy, houseStrategy) = {
+    let houseInitialHand = newHand deal()
+    let playerHand = playHand playerStrategy newHand(deal()) houseInitialHand.upCard()
+    match {
+        if playerHand.total() > 21 = 0
+        else = {
+            let houseHand = playHand houseStrategy houseInitialHand playerHand.upCard()
+            match {
+                if houseHand.total() > 21                 = 1
+                if playerHand.total() > houseHand.total() = 1
+                else                                      = 0
+            }
+        }
+    }
+}
+
+twentyOne stupidStrategy stupidStrategy
+
